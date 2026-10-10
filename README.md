@@ -21,6 +21,11 @@ npm run dev       # 启动开发服务器 → http://127.0.0.1:5199
 | `npm run preview` | 本地预览构建产物 |
 | `npx playwright test` | 跑自动化玩法闭环测试（3 条用例） |
 
+
+**游戏界面截图**
+
+![image.png](image-1791637844720.png)
+
 ---
 
 ## 二、玩法说明
