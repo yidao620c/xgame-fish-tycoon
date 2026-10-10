@@ -1,0 +1,16 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch();
+const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
+await page.goto('http://127.0.0.1:5199/?seed=7');
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#starter-picks .starter-card');
+await page.locator('#starter-picks .starter-card').nth(0).click();
+await page.locator('#starter-picks .starter-card').nth(1).click();
+await page.locator('#btn-start').click();
+await page.waitForFunction(() => window.__FISH2D__?.diag()?.ready);
+await page.waitForTimeout(1500);
+await page.locator('#stage').screenshot({ path: 'shot-fresh.png' });
+const st = await page.evaluate(() => window.__FISH2D__.hooks.getState());
+console.log('开局鱼数:', st.fish.length, '现金:', st.money);
+await b.close();

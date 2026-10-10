@@ -1,0 +1,28 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch();
+const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const errs = [];
+page.on('pageerror', (e) => { errs.push(e.message); console.log('PAGEERROR:', e.message); });
+await page.goto('http://127.0.0.1:5199/?seed=42');
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#starter-picks .starter-card');
+await page.locator('#starter-picks .starter-card').nth(0).click();
+await page.locator('#starter-picks .starter-card').nth(1).click();
+await page.locator('#btn-start').click();
+await page.waitForFunction(() => window.__FISH2D__?.diag()?.ready);
+await page.evaluate(() => {
+  window.__FISH2D__.hooks.addMoney(2000);
+  const s = window.__FISH2D__.sim();
+  for (let i = 0; i < 8; i++) s.buyItem(i % 2 ? 'egg_rare' : 'egg_common');
+  for (let i = 0; i < 2; i++) s.buyItem('egg_exotic');
+  window.__FISH2D__.hooks.forceAge(24);
+});
+await page.waitForTimeout(2500);
+await page.mouse.click(640, 400);
+await page.locator('#stage').screenshot({ path: 'shot-tank.png' });
+await page.evaluate(() => { window.__FISH2D__.hooks.moveToSale(4); window.__FISH2D__.hooks.setView(2); });
+await page.waitForTimeout(2500);
+await page.locator('#stage').screenshot({ path: 'shot-store.png' });
+console.log('errs:', errs.length);
+await b.close();

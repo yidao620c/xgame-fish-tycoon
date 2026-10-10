@@ -1,0 +1,34 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch();
+const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const errs = [];
+page.on('pageerror', (e) => errs.push(e.message));
+await page.goto('http://127.0.0.1:5199/?seed=42');
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#starter-picks .starter-card');
+await page.locator('#starter-picks .starter-card').nth(0).click();
+await page.locator('#starter-picks .starter-card').nth(1).click();
+await page.locator('#btn-start').click();
+await page.waitForFunction(() => window.__FISH2D__?.diag()?.ready);
+await page.waitForTimeout(1200);
+await page.locator('#stage').screenshot({ path: 'shot-eggs.png' });
+// 拖拽沉木验证
+const cv = await page.locator('#tank-canvas').boundingBox();
+await page.mouse.move(cv.x + cv.width * 0.5, cv.y + cv.height * 0.78);
+await page.mouse.down();
+await page.mouse.move(cv.x + cv.width * 0.2, cv.y + cv.height * 0.8, { steps: 8 });
+await page.mouse.up();
+const ov = await page.evaluate(() => JSON.parse(localStorage.getItem('fishTycoon2D_decor_v1') ?? '{}'));
+console.log('drag overrides:', JSON.stringify(ov));
+await page.waitForTimeout(500);
+await page.locator('#stage').screenshot({ path: 'shot-drag.png' });
+// 海报提示验证
+await page.evaluate(() => window.__FISH2D__.hooks.setView(2));
+await page.waitForTimeout(1500);
+await page.mouse.click(cv.x + cv.width * 0.22, cv.y + cv.height * 0.18);
+await page.waitForTimeout(400);
+const toastText = await page.evaluate(() => (() => { const ts = document.querySelectorAll('#toasts .toast'); return ts.length ? ts[ts.length-1].textContent : '(no toast)'; })() ?? '(no toast)');
+console.log('poster toast:', toastText.slice(0, 40));
+console.log('errs:', errs.length, errs.slice(0, 3));
+await b.close();

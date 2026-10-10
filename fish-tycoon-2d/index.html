@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>养鱼大亨 · Fish Tycoon 2D</title>
+</head>
+<body>
+  <div id="app">
+    <div id="stage">
+      <canvas id="tank-canvas" width="960" height="600"></canvas>
+
+      <!-- ============ 主缸视图 UI ============ -->
+      <div id="tank-ui">
+        <!-- 顶部：岩石纹理栏 -->
+        <div id="topbar">
+          <div id="toolbox">
+            <button class="tool-slot" id="quick-feed" title="鱼粮罐：点击投喂当前缸"><span class="t-ico">🥫</span><b class="t-n" id="n-food">0</b></button>
+            <button class="tool-slot" id="quick-med-fungus" title="真菌药：选中病鱼后使用"><span class="t-ico">💊</span><b class="t-n" id="n-fungus">0</b></button>
+            <button class="tool-slot" id="quick-med-ick" title="白点药：选中病鱼后使用"><span class="t-ico">🧪</span><b class="t-n" id="n-ick">0</b></button>
+            <button class="tool-slot" id="quick-vitamin" title="维生素：选中鱼后使用"><span class="t-ico">🍶</span><b class="t-n" id="n-vit">0</b></button>
+          </div>
+          <div id="top-title"><span id="magic-banner">Magic Breeds Discovered: <b id="magic-count">0</b>/7</span></div>
+          <div id="tank-tabs">
+            <div class="speed-mini" title="时间流速">
+              <button data-speed="1">1×</button><button data-speed="4">4×</button><button data-speed="20">20×</button>
+            </div>
+            <button class="bubble-tab" data-tank="0">Tank One<span class="tab-badge" id="badge-0"></span></button>
+            <button class="bubble-tab" data-tank="1" id="tab-tank2" title="需购买二号缸">Tank Two<span class="tab-badge" id="badge-1"></span></button>
+            <button class="bubble-tab sale" data-tank="2">Sale&nbsp;Tank<span class="tab-badge" id="badge-2"></span></button>
+          </div>
+        </div>
+
+        <!-- 缸内右下：Health/Fed 条 + 垃圾桶 -->
+        <div id="vitals">
+          <div class="vital"><label>Health</label><div class="vbar"><div id="bar-health"></div></div></div>
+          <div class="vital"><label>Fed</label><div class="vbar"><div id="bar-fed"></div></div></div>
+          <div id="tank-state">饲料 --% · 污染 --%</div>
+        </div>
+
+        <!-- 底部：岩石纹理栏 -->
+        <div id="bottombar">
+          <div id="shell-buttons">
+            <button class="orig-btn menu" id="btn-menu"><i></i><span>Menu</span></button>
+            <button class="orig-btn supplies" id="btn-supplies"><i></i><span>Supplies</span></button>
+            <button class="orig-btn species" id="btn-species"><i></i><span>Species</span></button>
+            <button class="orig-btn sell" id="btn-sellfish"><i></i><span>Sell Fish</span></button>
+          </div>
+          <div id="info-card">
+            <div id="info-name">— 点击一条鱼查看 —</div>
+            <div id="info-status">Status: —</div>
+            <div id="info-age">Age: —</div>
+            <div id="info-cash">Your cash: $0</div>
+            <div id="fish-actions" hidden>
+              <button data-act="pair">配对</button>
+              <button data-act="move0">→一号缸</button>
+              <button data-act="move1">→二号缸</button>
+              <button data-act="move2">→$出售缸</button>
+              <button data-act="sell">卖出</button>
+              <button data-act="med-fungus">真菌药</button>
+              <button data-act="med-ick">白点药</button>
+              <button data-act="vitamin">维生素</button>
+              <button data-act="dispose">🗑 丢弃</button>
+            </div>
+          </div>
+          <!-- 隔离小缸：显示选中的鱼 -->
+          <div id="iso-tank-wrap" title="隔离观察缸：点击鱼放入，在此查看与配对">
+            <canvas id="iso-canvas" width="132" height="86"></canvas>
+          </div>
+          <div id="bb-right">
+            <button class="trash-btn" id="btn-trash" title="清理当前缸的死鱼">🗑</button>
+            <button id="btn-screensaver" title="屏保模式：隐藏界面纯赏鱼">Screen<br>Saver</button>
+          </div>
+        </div>
+
+        <div id="year-badge">Year <b id="year-num">1</b></div>
+        <div id="pair-hint" hidden>💘 配对模式：点击同缸的第二条成年鱼（ESC 取消）</div>
+      </div>
+
+      <!-- ============ Fish Store 视图专属 UI ============ -->
+      <div id="store-ui" hidden>
+        <div id="store-head"><h1>Fish Store</h1></div>
+        <div id="store-banner">
+          <div id="sold-card">
+            <div id="sold-name">—</div>
+            <div id="sold-fish-art"></div>
+            <div id="sold-stamp">SOLD</div>
+          </div>
+          <div class="sale-line"><span class="lbl">Fish for sale:</span><b id="sale-count">0</b></div>
+          <div class="sale-line price"><span class="lbl">Price:</span><b id="sale-price">$0</b></div>
+        </div>
+        <div id="store-foot">
+          <div id="store-cash">Your cash: $0</div>
+          <button id="btn-store-done">Done</button>
+        </div>
+      </div>
+
+      <!-- 屏保模式提示 -->
+      <div id="screensaver-exit" hidden>点击任意处退出屏保</div>
+
+      <!-- Toast -->
+      <div id="toasts"></div>
+
+      <!-- 通用模态（Supplies / Species / Trophy / Menu） -->
+      <div id="modal" hidden><div id="modal-box"></div></div>
+
+      <!-- 开局选鱼 -->
+      <div id="start-overlay">
+        <div id="start-box">
+          <h1>养鱼大亨</h1>
+          <p class="sub">Fish Tycoon · 伊苏拉鱼店</p>
+          <p class="desc">系统分配给你 <b>$150</b> 和一号鱼缸。请从 4 条创始鱼中挑选 <b>2 条</b>开始喂养（自动一雌一雄）。精心照料它们成长、配对繁殖、发现 441 种组合，最终找出 <b>7 条魔法鱼</b>！</p>
+          <div id="starter-picks"></div>
+          <button id="btn-start" disabled>选择 2 份鱼卵后开始</button>
+          <p class="tip">10 分钟 = 1 岁 · 关闭游戏鱼也会继续成长（上限 8 小时）</p>
+        </div>
+      </div>
+
+      <!-- 帮助 -->
+      <div id="help-overlay" hidden>
+        <div id="help-box">
+          <h2>玩法说明</h2>
+          <ul>
+            <li><b>喂养</b>：顶栏鱼粮罐投喂当前缸；饲料见底会饿病，过饱污染水体。</li>
+            <li><b>查看/配对</b>：点击鱼 → 出现在右下隔离缸；点「配对」再点同缸另一条成年鱼。母鱼 0.4 年后产 3-5 苗。</li>
+            <li><b>基因</b>：子代 = ⌊(父+母)÷2⌋。441 组合，越稀有越值钱；杂种后代是弱质鱼（需环境研究 Lv2 保命）。</li>
+            <li><b>疾病</b>：白点用 🧪、真菌用 💊 对症下药；会传染，死鱼用 🗑 清理。</li>
+            <li><b>研究</b>：Supplies 右侧木架三本书——环境/营养/广告。</li>
+            <li><b>销售</b>：成年鱼移入 $ 出售缸，切到 Sale Tank 看顾客自动买鱼；价格倍率越低越好卖。</li>
+            <li><b>屏保</b>：右下 Screen Saver 隐藏界面纯赏鱼。</li>
+            <li><b>目标</b>：育出 7 条魔法鱼（Trophy Room 查看），活着待在缸里才生效。</li>
+          </ul>
+          <button id="btn-help-close">知道了</button>
+        </div>
+      </div>
+
+      <!-- 胜利 -->
+      <div id="win-overlay" hidden>
+        <div id="win-box">
+          <h1>🏆 恭喜！</h1>
+          <p>你找到了全部 <b>7 条魔法鱼</b>，伊苏拉鱼店传奇达成！</p>
+          <p id="win-stats"></p>
+          <button id="btn-win-close">继续经营</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

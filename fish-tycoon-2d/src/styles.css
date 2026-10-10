@@ -1,0 +1,765 @@
+/* 养鱼大亨 2D —— 按原作截图复刻 UI（紫色岩石纹理 / 嵌入工具箱 / 气泡标签 / 圆形图标按钮） */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+:root {
+  --rock-hi: #8a7ab8;
+  --rock: #5a4a88;
+  --rock-dark: #38295e;
+  --gold: #f2c14e;
+  --card-bg: rgba(8, 8, 18, 0.88);
+}
+
+html, body { width: 100%; height: 100%; background: #141024; overflow: hidden; }
+body { font-family: Verdana, 'Microsoft YaHei', sans-serif; color: #fff; }
+
+#app { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 30%, #2a2050, #100a20); }
+
+#stage {
+  position: relative;
+  width: min(100vw, calc(100vh * 1.6));
+  height: min(100vh, calc(100vw / 1.6));
+  background: var(--rock-dark);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,0,0,0.85);
+}
+
+/* 紫色岩石/大理石纹理（顶底栏共用） */
+.rock-tex {
+  background:
+    radial-gradient(ellipse 60px 22px at 12% 28%, rgba(216,196,255,0.30), transparent 60%),
+    radial-gradient(ellipse 80px 30px at 34% 72%, rgba(0,0,0,0.42), transparent 65%),
+    radial-gradient(ellipse 50px 18px at 55% 22%, rgba(216,196,255,0.26), transparent 60%),
+    radial-gradient(ellipse 90px 34px at 78% 66%, rgba(0,0,0,0.46), transparent 65%),
+    radial-gradient(ellipse 46px 16px at 92% 30%, rgba(216,196,255,0.22), transparent 60%),
+    radial-gradient(ellipse 34px 12px at 68% 40%, rgba(0,0,0,0.32), transparent 65%),
+    radial-gradient(ellipse 30px 11px at 22% 82%, rgba(216,196,255,0.20), transparent 60%),
+    linear-gradient(180deg, #8472b8 0%, #5f4c92 45%, #4a3a7e 80%, #362864 100%);
+}
+.rock-tex::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle 2px at 18% 40%, rgba(255,255,255,0.25), transparent),
+    radial-gradient(circle 1.5px at 42% 65%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(circle 2px at 66% 30%, rgba(255,255,255,0.22), transparent),
+    radial-gradient(circle 1.5px at 84% 58%, rgba(255,255,255,0.2), transparent);
+}
+
+#tank-canvas {
+  position: absolute; top: 46px; left: 0;
+  width: 100%; height: calc(100% - 46px - 88px);
+  display: block; cursor: pointer;
+}
+
+/* ============ 顶栏 ============ */
+#topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 46px;
+  display: flex; align-items: stretch; justify-content: space-between;
+  z-index: 10; border-bottom: 2px solid #241a48;
+}
+#toolbox { display: flex; gap: 5px; padding: 5px 8px; align-items: center; }
+.tool-slot {
+  position: relative; width: 42px; height: 36px; cursor: pointer;
+  border-radius: 5px; border: 1px solid #2a2050;
+  background: linear-gradient(180deg, #241a44, #3a2a60);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.65), inset 0 -1px 2px rgba(255,255,255,0.15), 0 1px 1px rgba(255,255,255,0.12);
+  font-size: 18px; line-height: 1;
+}
+.tool-slot:hover { filter: brightness(1.35); }
+.tool-slot:active { transform: translateY(1px); }
+.tool-slot .t-ico { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); }
+.tool-slot .t-n {
+  position: absolute; right: 1px; bottom: 0; font-size: 9px; color: #fff;
+  background: rgba(0,0,0,0.7); border-radius: 4px; padding: 0 3px; font-family: Verdana, sans-serif;
+}
+#top-title {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: inherit;
+}
+#magic-banner {
+  font-size: 10px; color: #ffe9a0; text-shadow: 0 1px 2px #000; letter-spacing: 0.4px;
+  opacity: 0.95;
+}
+#magic-banner b { color: #ffd75e; }
+#tank-tabs { display: flex; align-items: center; gap: 2px; padding: 4px 8px 4px 4px; }
+/* 缸标签数量徽章（原版 Tank One/Two/Sale Tank 标签内显示库存） */
+.tab-badge {
+  display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 9px;
+  background: rgba(20,40,70,0.85); color: #ffe9a0; font: bold 10px Verdana, sans-serif;
+  border: 1px solid rgba(255,220,150,0.5); vertical-align: 1px;
+}
+.tab-badge:empty { display: none; }
+.speed-mini { display: flex; gap: 1px; margin-right: 8px; }
+.speed-mini button {
+  font-size: 9px; padding: 3px 5px; cursor: pointer; color: #cfc4f0;
+  background: rgba(20,12,44,0.65); border: 1px solid rgba(255,255,255,0.18); border-radius: 4px 0 0 4px;
+}
+.speed-mini button + button { border-radius: 0; }
+.speed-mini button:last-child { border-radius: 0 4px 4px 0; }
+.speed-mini button.on { background: var(--gold); color: #4a3010; font-weight: bold; }
+
+/* 气泡形缸标签（白色描边不规则圆） */
+.bubble-tab {
+  font-family: Verdana, sans-serif; font-size: 13px; font-weight: bold; cursor: pointer;
+  color: #fff; padding: 9px 16px; position: relative;
+  background: radial-gradient(ellipse at 42% 30%, #9a8ac8, #5a4a88 72%);
+  border: 2px solid rgba(255,255,255,0.85);
+  border-radius: 48% 52% 46% 54% / 58% 56% 44% 42%;
+  text-shadow: 0 1px 3px #000, 0 0 4px rgba(0,0,0,0.6);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 2px 5px rgba(0,0,0,0.5);
+}
+.bubble-tab:nth-child(3) { border-radius: 52% 48% 54% 46% / 54% 60% 40% 46%; }
+.bubble-tab.sale { border-radius: 46% 54% 48% 52% / 60% 52% 48% 40%; }
+.bubble-tab:hover { filter: brightness(1.18); }
+.bubble-tab.on {
+  background: radial-gradient(ellipse at 42% 30%, #f4ecff, #b9a6e8 70%);
+  color: #2c1e58; text-shadow: none;
+}
+.bubble-tab:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ============ 缸内右下生命条（原作样式：黄标签+绿条） ============ */
+#vitals {
+  position: absolute; right: 10px; bottom: 96px; z-index: 9;
+  display: flex; flex-direction: column; gap: 3px; pointer-events: none;
+  text-shadow: 0 1px 2px #000;
+}
+.vital { display: flex; align-items: center; gap: 6px; }
+.vital label { font-size: 10px; color: #ffe9a0; width: 38px; text-align: right; }
+.vbar { width: 150px; height: 10px; background: rgba(0,0,0,0.55); border: 1px solid #d8d8e8; border-radius: 2px; overflow: hidden; }
+.vbar > div { height: 100%; width: 100%; background: linear-gradient(180deg, #7ce87c, #2ca82c); transition: width 0.3s; }
+#bar-fed { background: linear-gradient(180deg, #f4e05e, #c8a020); }
+#tank-state { font-size: 9px; color: #cfe0ff; margin-top: 2px; text-align: right; }
+
+/* ============ 底栏 ============ */
+#bottombar {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 88px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 12px; z-index: 10; border-top: 2px solid #241a48;
+}
+
+/* 原作四色圆形按钮 */
+#shell-buttons { display: flex; gap: 8px; }
+.orig-btn {
+  position: relative; width: 64px; height: 64px; border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.55); cursor: pointer;
+  box-shadow: inset 0 3px 6px rgba(255,255,255,0.4), inset 0 -5px 9px rgba(0,0,0,0.5), 0 3px 7px rgba(0,0,0,0.6);
+}
+.orig-btn:hover { filter: brightness(1.2); }
+.orig-btn:active { transform: translateY(2px); }
+.orig-btn span {
+  position: absolute; left: 50%; bottom: -15px; transform: translateX(-50%);
+  font-size: 10px; font-weight: bold; color: #fff; white-space: nowrap;
+  text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+.orig-btn::before {
+  /* 官方贝壳按钮的放射棱纹（扇贝壳质感） */
+  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 2;
+  background: repeating-conic-gradient(from -8deg at 50% 62%, rgba(255,255,255,0.16) 0deg 8deg, rgba(8,4,28,0.20) 8deg 16deg);
+  mix-blend-mode: overlay;
+}
+.orig-btn i { position: absolute; inset: 0; border-radius: 50%; }
+/* Menu：紫色螺旋贝壳 */
+.orig-btn.menu { background: radial-gradient(circle at 38% 32%, #c8b8e8, #8a72c0 45%, #5a3e98 78%, #3e2a70); }
+.orig-btn.menu i {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 4px, rgba(255,255,255,0.35) 4.5px, transparent 6px),
+    radial-gradient(circle at 50% 50%, transparent 9px, rgba(255,255,255,0.3) 9.5px, transparent 12px),
+    radial-gradient(circle at 50% 50%, transparent 15px, rgba(255,255,255,0.25) 15.5px, transparent 19px),
+    radial-gradient(circle at 50% 50%, transparent 22px, rgba(255,255,255,0.2) 22.5px, transparent 27px);
+}
+/* Supplies：红色鱼粮罐 */
+.orig-btn.supplies { background: radial-gradient(circle at 40% 30%, #f0a080, #d05030 55%, #902818 85%); }
+.orig-btn.supplies i {
+  background:
+    linear-gradient(180deg, transparent 26%, rgba(250,230,120,0.92) 26%, rgba(250,230,120,0.92) 74%, transparent 74%);
+  -webkit-mask: radial-gradient(circle, #000 98%, transparent); mask: radial-gradient(circle, #000 98%, transparent);
+}
+.orig-btn.supplies::after {
+  content: '🐟'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: 17px; z-index: 1;
+}
+/* Species：灰白贝壳+鱼 */
+.orig-btn.species { background: radial-gradient(circle at 40% 32%, #f0ecf4, #b8b0c8 55%, #8078a0 85%); }
+.orig-btn.species::after {
+  content: '🐠'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: 22px; z-index: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.4));
+}
+/* Sell Fish：绿色 $ 罐 */
+.orig-btn.sell { background: radial-gradient(circle at 40% 30%, #a8e890, #48a838 55%, #207018 85%); }
+.orig-btn.sell i {
+  background: linear-gradient(180deg, transparent 24%, rgba(255,255,255,0.85) 24%, rgba(255,255,255,0.85) 76%, transparent 76%);
+  -webkit-mask: radial-gradient(circle, #000 98%, transparent); mask: radial-gradient(circle, #000 98%, transparent);
+}
+.orig-btn.sell::after {
+  content: '$'; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: 24px; font-weight: bold; color: #1c5410; z-index: 1; font-family: Georgia, serif;
+}
+
+/* 黑底信息卡（原作样式） */
+#info-card {
+  min-width: 240px; max-width: 320px;
+  background: var(--card-bg);
+  border: 2px solid rgba(255,255,255,0.55); border-radius: 4px;
+  box-shadow: 0 0 0 3px #5a4a86, 0 0 0 4px #2a1e4e, 0 3px 8px rgba(0,0,0,0.55);
+  padding: 6px 12px 7px; position: relative;
+}
+#info-name { font-size: 16px; color: #ffd75e; font-weight: bold; font-family: Georgia, serif; }
+#info-status { font-size: 12px; color: #fff; }
+#info-status.pregnant { color: #ff9ad6; }
+#info-status.sick { color: #8adf6a; }
+#info-age { font-size: 12px; color: #fff; }
+#info-cash {
+  font-size: 15px; color: #fff; font-weight: bold; margin-top: 4px;
+  border-top: 1px solid rgba(255,255,255,0.4); padding-top: 3px;
+  font-family: Georgia, serif;
+}
+#fish-actions { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
+#fish-actions button {
+  font-size: 10px; padding: 3px 6px; cursor: pointer;
+  background: #3a2a60; color: #fff; border: 1px solid #8a7ab8; border-radius: 4px;
+}
+#fish-actions button:hover { background: #5a4a88; }
+#fish-actions button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* 隔离小缸（银色边框小缸） */
+#iso-tank-wrap {
+  width: 138px; height: 92px; padding: 3px;
+  background: linear-gradient(160deg, #c8ccd8, #7a8090 55%, #4a5060);
+  border-radius: 6px; box-shadow: inset 0 1px 2px rgba(255,255,255,0.6), 0 2px 5px rgba(0,0,0,0.5);
+}
+#iso-canvas { width: 100%; height: 100%; border-radius: 3px; display: block; background: #9cd0f0; }
+
+#bb-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.trash-btn {
+  width: 40px; height: 48px; font-size: 20px; cursor: pointer;
+  background: linear-gradient(180deg, #9aa0ac, #565c68);
+  border: 2px solid #2a2e38; border-radius: 4px;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.4);
+}
+.trash-btn:hover { filter: brightness(1.2); }
+#btn-screensaver {
+  width: 74px; height: 46px; cursor: pointer;
+  font-size: 11px; font-weight: bold; line-height: 1.15; color: #fff;
+  font-family: Verdana, sans-serif; text-shadow: 0 1px 2px #000;
+  background: radial-gradient(ellipse at 50% 30%, #7cd8a0, #2c9858 70%);
+  border: 2px solid #1a6038; border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%;
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.5);
+}
+#btn-screensaver:hover { filter: brightness(1.15); }
+
+#year-badge {
+  position: absolute; top: 52px; left: 10px; z-index: 9;
+  font-size: 11px; text-shadow: 0 1px 3px #000;
+  background: rgba(0,0,0,0.45); padding: 3px 10px; border-radius: 8px;
+}
+#year-badge b { color: var(--gold); }
+
+#pair-hint {
+  position: absolute; top: 54px; left: 50%; transform: translateX(-50%); z-index: 12;
+  background: rgba(210,60,160,0.93); font-size: 13px;
+  padding: 7px 16px; border-radius: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* ============ Fish Store 视图 ============ */
+#store-ui { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; pointer-events: none; }
+#store-ui > * { pointer-events: auto; }
+/* 绿叶标题带 */
+#store-head {
+  height: 52px; display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(circle 26px at 12% 50%, rgba(120,200,80,0.5), transparent 70%),
+    radial-gradient(circle 34px at 40% 40%, rgba(90,170,60,0.5), transparent 70%),
+    radial-gradient(circle 30px at 70% 60%, rgba(120,200,80,0.45), transparent 70%),
+    radial-gradient(circle 26px at 92% 45%, rgba(90,170,60,0.5), transparent 70%),
+    linear-gradient(180deg, #5aa03c, #3c7826);
+  border-bottom: 3px solid #2c5a1a;
+}
+#store-head h1 { font-family: Georgia, serif; font-size: 30px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.6); letter-spacing: 2px; }
+#store-banner {
+  margin-top: auto; height: 150px;
+  display: flex; align-items: center; gap: 22px; padding: 0 26px;
+  background: url('../assets/sprites/seabed_bar.jpg') center 34% / cover no-repeat;
+  border-top: 3px solid #6aa050;
+  box-shadow: inset 0 10px 18px rgba(0,20,10,0.38);
+}
+#sold-card {
+  position: relative; width: 190px; height: 118px;
+  background: linear-gradient(160deg, #2c5a34, #1e4028);
+  border: 3px solid #c8b080; border-radius: 6px;
+  padding: 8px 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+#sold-name { font-family: Georgia, serif; font-size: 14px; color: #fff; }
+#sold-fish-art { position: absolute; left: 26px; bottom: 8px; width: 100px; height: 44px; }
+#sold-stamp {
+  position: absolute; left: 10px; bottom: 12px;
+  font-family: Georgia, serif; font-size: 24px; font-weight: bold; color: #e8e8e8;
+  transform: rotate(-14deg); text-shadow: 0 1px 2px #000; letter-spacing: 2px;
+}
+/* v4：官方横幅为白字深描边直接写在绿色水下背景上（无黑底牌） */
+.sale-line {
+  background: transparent; border: none; border-radius: 4px;
+  padding: 8px 16px; font-size: 24px; font-weight: bold; font-family: Georgia, serif; color: #fff;
+  text-shadow: -2px -2px 0 #2a3a28, 2px -2px 0 #2a3a28, -2px 2px 0 #2a3a28, 2px 2px 0 #2a3a28, 0 3px 4px rgba(0,0,0,0.5);
+}
+.sale-line .lbl { color: #fff; margin-right: 10px; }
+.sale-line b { color: #ffe89a; text-shadow: -2px -2px 0 #2a3a28, 2px -2px 0 #2a3a28, -2px 2px 0 #2a3a28, 2px 2px 0 #2a3a28, 0 3px 4px rgba(0,0,0,0.5); }
+#store-foot {
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; background: linear-gradient(180deg, #2a2438, #14101e);
+}
+#store-cash {
+  font-family: Georgia, serif; font-size: 19px; font-weight: bold; color: #fff;
+  background: rgba(0,0,0,0.8); padding: 6px 18px; border: 1px solid rgba(255,255,255,0.35); border-radius: 4px;
+}
+#btn-store-done {
+  font-family: Georgia, serif; font-size: 17px; font-weight: bold; cursor: pointer;
+  color: #fff; padding: 10px 30px;
+  background: radial-gradient(ellipse at 50% 30%, #6cc860, #2c8a30 72%);
+  border: 2px solid #1a5a20; border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+  box-shadow: inset 0 2px 3px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.5);
+}
+#btn-store-done:hover { filter: brightness(1.15); }
+
+/* 屏保 */
+#screensaver-exit {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 60;
+  font-size: 12px; color: #fff; background: rgba(0,0,0,0.5); padding: 6px 16px; border-radius: 14px;
+  opacity: 0.7;
+}
+
+/* ============ Toast ============ */
+#toasts {
+  position: absolute; top: 100px; right: 12px; z-index: 35;
+  display: flex; flex-direction: column; gap: 5px; pointer-events: none;
+}
+.toast {
+  font-size: 12px; padding: 7px 12px; border-radius: 8px; max-width: 260px;
+  background: rgba(12,10,26,0.92); border-left: 3px solid #888;
+  animation: toast-in 0.25s ease-out;
+}
+.toast.good { border-color: #6a6; color: #bfe8bf; }
+.toast.bad { border-color: #c66; color: #f0b8b8; }
+.toast.gold { border-color: var(--gold); color: #ffe9a0; }
+.toast.info { border-color: #6ac; color: #b8dcf0; }
+@keyframes toast-in { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
+
+/* ============ 模态容器（各面板自成主题） ============ */
+#modal { position: absolute; inset: 0; z-index: 40; }
+#modal-box { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+
+/* ============ Fish Supplies：水下+渔网+木架 ============ */
+.panel-supplies {
+  background:
+    radial-gradient(ellipse 24% 40% at 12% 82%, rgba(230,170,90,0.5), transparent 70%),
+    radial-gradient(ellipse 18% 30% at 88% 24%, rgba(220,160,220,0.25), transparent 70%),
+    linear-gradient(180deg, #4aa8b8 0%, #3a8a9c 45%, #2c7284 100%);
+}
+.sup-slots { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
+.sup-slot {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  background: rgba(30,18,10,0.55); border: 1px solid rgba(255,220,170,0.35); border-radius: 3px; font-size: 17px;
+}
+.sup-slot img { max-width: 88%; max-height: 88%; }
+.sup-head {
+  position: relative; height: 54px; display: flex; align-items: center; justify-content: center; padding: 0 20px;
+  background:
+    radial-gradient(ellipse 90px 30px at 18% 40%, rgba(255,255,255,0.10), transparent 65%),
+    radial-gradient(ellipse 70px 26px at 72% 60%, rgba(0,0,0,0.25), transparent 65%),
+    linear-gradient(180deg, #a05a3c, #7a3c28 60%, #5e2c1e);
+}
+.sup-head h1 { font-family: Georgia, serif; font-size: 30px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.55); letter-spacing: 2px; }
+/* 渔网商品格 */
+.sup-grid-wrap {
+  flex: 1.7; padding: 10px;
+  background:
+    repeating-linear-gradient(0deg, rgba(240,230,190,0.4) 0 1.5px, transparent 1.5px 25%),
+    repeating-linear-gradient(90deg, rgba(240,230,190,0.4) 0 1.5px, transparent 1.5px 12.5%),
+    rgba(20,60,70,0.35);
+  border: 3px solid rgba(240,230,190,0.5); border-radius: 8px;
+  display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 0;
+  overflow-y: auto; align-content: start;
+}
+.sup-cell {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  cursor: pointer; padding: 4px 2px; min-height: 68px; text-align: center;
+  border-right: 1px solid rgba(240,230,190,0.35); border-bottom: 1px solid rgba(240,230,190,0.35);
+}
+.sup-cell:hover { background: rgba(255,255,255,0.12); }
+.sup-cell.sel { background: rgba(255,235,150,0.22); outline: 2px solid var(--gold); outline-offset: -2px; }
+/* 上半部：渔网（物品挂在网格上，格子明显大于物品，物品占格 ~80%） */
+.sup-body { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 14px 22px; overflow: hidden; }
+/* 上半部：水下实景 + 半透明绳网（8 列满格，物品居中约占格 55%） */
+.sup-body { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 10px 16px; overflow: hidden; }
+.sup-net {
+  flex: 1.75; min-height: 0; display: grid; grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: 1fr; gap: 4px; padding: 10px;
+  background-image: var(--net-img), var(--bg-img);
+  background-size: 250px 250px, cover;
+  background-position: center, center;
+  background-repeat: repeat, no-repeat;
+  border: 3px solid rgba(120,88,44,0.85); border-radius: 3px;
+  box-shadow: inset 0 0 30px rgba(0,20,30,0.45), 0 6px 14px rgba(0,0,0,0.45);
+  /* 差距②：网面轻微透视倾斜（网在前、物品在后），贴近原版的空间感 */
+  transform: perspective(1400px) rotateX(3.2deg);
+  transform-origin: 50% 0%;
+}
+.sup-bottom { flex: 1 1 40%; display: flex; min-height: 0; }
+.sup-grid-wrap {
+  min-width: 0;
+  background-size: cover; background-position: center;
+  border: 3px solid rgba(90,70,40,0.75); border-radius: 4px;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.35);
+}
+.sup-cell {
+  background: transparent; border: none; box-shadow: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+}
+.sup-cell.sel {
+  background: radial-gradient(ellipse at 50% 45%, rgba(255,240,180,0.34), rgba(255,235,150,0.10) 70%);
+  outline: 2px solid #fff3c4; outline-offset: -3px;
+  box-shadow: inset 0 0 18px rgba(255,240,180,0.45);
+}
+.sup-cell.sel .ico img { transform: scale(1.12); filter: drop-shadow(0 0 8px rgba(255,235,150,0.9)) drop-shadow(0 3px 4px rgba(0,0,0,0.5)); }
+.sup-cell .ico img { transition: transform 0.12s ease; }
+.sup-cell .ico {
+  flex: 1; width: 100%; min-height: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 22px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.45));
+}
+.sup-cell .ico img {
+  max-width: 62%; max-height: 88%; width: auto; height: auto; object-fit: contain;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.55));
+}
+.sup-cell .nm { font-size: 10px; color: #fff; text-shadow: 0 1px 2px #000; }
+.sup-cell .nm-en { font-size: 9px; color: #ffe9a0; text-shadow: 0 1px 2px #000; font-family: Verdana, sans-serif; }
+.sup-cell .pr { font-size: 10px; color: var(--gold); text-shadow: 0 1px 2px #000; }
+
+/* 右半部：三层木架（占约 1/2 宽度；有木纹的立体层板 + 两侧垂直木棍固定） */
+.sup-shelf {
+  position: relative; flex: 0 0 33%; margin-left: auto;
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 8px 26px 10px 8px;
+}
+.shelf-post {
+  position: absolute; top: -2px; bottom: -2px; width: 15px; border-radius: 7px; z-index: 3;
+  background:
+    repeating-linear-gradient(180deg, rgba(50,30,12,0.4) 0 3px, transparent 3px 10px),
+    linear-gradient(90deg, #4a3216, #b08a50 38%, #d8ae6e 50%, #8a6538 72%, #3e2810);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 0 3px rgba(255,230,180,0.35);
+}
+.shelf-post.left { display: none; }
+.shelf-post.right { right: 4px; }
+.shelf-board {
+  position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; cursor: pointer; padding: 3px 10px 6px;
+  border-radius: 3px; border-bottom: none;
+  /* 真实木纹层板素材（含前缘厚度，立体感来自照片级光影） */
+  background: url('../assets/sprites/ui_shelf_board.png') center / 100% 100% no-repeat;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.55);
+}
+.shelf-board:hover { filter: brightness(1.12); }
+.shelf-board.done { opacity: 0.8; }
+/* 层板左端的深色标签牌（参考图样式） */
+.shelf-tag {
+  position: absolute; left: -6px; top: 4px; z-index: 2;
+  background: linear-gradient(180deg, #4a4238, #2e2a24); color: #fff;
+  font: 11px Georgia, serif; padding: 3px 12px; border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.28); box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+/* 层板物件：接触阴影（椭圆落影）+ 双层投影，营造"放在板上"的立体感 */
+.board-goods { display: flex; align-items: flex-end; justify-content: center; gap: 16px; height: 52px; position: relative; z-index: 1; }
+.board-goods::after {
+  content: ''; position: absolute; left: 6%; right: 6%; bottom: 2px; height: 12px;
+  background: radial-gradient(ellipse at center, rgba(30,16,6,0.55), rgba(30,16,6,0) 72%);
+  filter: blur(1.5px); pointer-events: none;
+}
+.board-goods .g {
+  height: 46px; width: auto; position: relative;
+  filter: drop-shadow(0 5px 4px rgba(28,14,4,0.62)) drop-shadow(0 1px 1px rgba(255,235,200,0.28));
+}
+.board-goods .g.wide { height: 54px; }
+.board-foot { display: flex; justify-content: space-between; font-size: 9px; color: #ffe4a8; margin-top: 2px; }
+.board-foot .cost { color: var(--gold); font-weight: bold; }
+.book-ico { height: 20px; width: auto; vertical-align: -5px; margin-right: 3px; }
+
+/* 左下角：物品属性与价格弹框（含介绍段落），占左半部 */
+.sup-bottom { position: relative; }
+.sup-detail {
+  position: absolute; left: 4px; bottom: 44px; width: 54%;
+  background: rgba(38,40,36,0.78); border: 2px solid rgba(226,222,210,0.55); border-radius: 3px;
+  padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sup-detail h3 { font-size: 24px; color: #fff; font-family: Georgia, serif; margin: 0; text-shadow: 0 2px 3px rgba(0,0,0,0.6); }
+.sup-detail .d-desc { font-size: 12px; color: #e6e6e6; }
+.sup-detail .d-story { font-size: 12px; line-height: 1.6; color: #dcdcdc; text-align: justify; }
+/* 独立黑底价格条（参考图在属性框下方单独一块） */
+.d-price {
+  position: absolute; left: 4px; bottom: 6px; min-width: 170px;
+  background: rgba(12,12,14,0.88); border: 2px solid rgba(226,222,210,0.5); border-radius: 3px;
+  padding: 6px 14px; font-size: 18px; color: #fff; font-family: Georgia, serif;
+}
+.d-story { font-size: 12px; line-height: 1.65; color: #d8ecd8; text-align: justify; }
+.sup-cell .nm { font-size: 10px; color: #fff; }
+.sup-cell .pr { font-size: 10px; color: #ffe9a0; }
+/* 深绿描述面板 */
+.sup-detail {
+  flex: 1; max-width: 400px;
+  background: rgba(24,52,36,0.88);
+  border: 2px solid rgba(200,176,128,0.5); border-radius: 8px;
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;
+}
+.sup-detail h3 { font-family: Georgia, serif; font-size: 22px; color: #fff; }
+.sup-detail .d { font-size: 13px; color: #e8f0e0; line-height: 1.65; }
+.sup-detail .p { font-size: 19px; color: var(--gold); font-family: Georgia, serif; }
+/* 研究木架 */
+.research-shelf {
+  margin-top: auto; display: flex; flex-direction: column; gap: 7px;
+  background: linear-gradient(180deg, #7a4a28, #5e3418); border: 3px solid #4a2a12; border-radius: 6px; padding: 10px;
+}
+.research-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: rgba(0,0,0,0.25); border-radius: 4px; padding: 8px 10px; cursor: pointer;
+}
+.research-row:hover { background: rgba(255,255,255,0.1); }
+.research-row .t { font-size: 12px; font-weight: bold; color: #fff; }
+.research-row .lv { font-size: 10px; color: #cfe0c0; }
+.research-row .cost { font-size: 14px; color: var(--gold); font-family: Georgia, serif; }
+.research-row.done { opacity: 0.55; }
+/* 底部 cash 条 + 红贝壳按钮 */
+.panel-foot {
+  height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px;
+  background: url('../assets/sprites/seabed_bar.jpg') center 42% / cover no-repeat;
+  border-top: 2px solid rgba(20,50,30,0.6);
+  box-shadow: inset 0 8px 14px rgba(0,20,10,0.45);
+}
+.cash-line { text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  font-family: Georgia, serif; font-size: 18px; font-weight: bold; color: #fff;
+  background: rgba(0,0,0,0.82); padding: 7px 20px; border-radius: 4px;
+}
+.oyster-btn {
+  font-family: Georgia, serif; font-size: 16px; font-weight: bold; cursor: pointer; color: #fff;
+  padding: 11px 28px;
+  background: radial-gradient(ellipse at 50% 28%, #f0a890, #d05840 60%, #a03020 85%);
+  border: 2px solid #701e12; border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.35), 0 2px 6px rgba(0,0,0,0.5);
+}
+.oyster-btn:hover { filter: brightness(1.15); }
+.oyster-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.oyster-btn.teal {
+  background: radial-gradient(ellipse at 50% 28%, #8ad8e0, #3a9aa8 60%, #20707e 85%);
+  border-color: #14505c;
+}
+
+/* ============ Species Chart：青色 DNA + 贝壳卡片 + 键盘 ============ */
+.panel-species {
+  background:
+    radial-gradient(ellipse 20% 34% at 10% 78%, rgba(230,170,130,0.4), transparent 70%),
+    radial-gradient(ellipse 16% 26% at 60% 90%, rgba(230,170,130,0.35), transparent 70%),
+    linear-gradient(180deg, #7ab8c8 0%, #5a9cb0 50%, #4888a0 100%);
+}
+.spec-head {
+  height: 54px; display: flex; align-items: center; justify-content: center; position: relative;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 40px, rgba(255,255,255,0.14) 40px 42px, transparent 42px 80px),
+    linear-gradient(180deg, #4a98ac, #387c92);
+  border-bottom: 3px solid #2c6478;
+}
+.spec-head h1 { font-family: Georgia, serif; font-size: 30px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); letter-spacing: 2px; }
+.spec-body { flex: 1; display: flex; gap: 18px; padding: 18px 26px; overflow: hidden; }
+.spec-list {
+  flex: 1.25; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  overflow-y: auto; padding: 10px; align-content: start;
+}
+/* 贝壳形卡片 */
+/* v6.2：贝壳卡片（AI 扇贝壳 sprite 为底，鱼叠壳上）—— 对照 species_chat.jpg */
+.sp-card {
+  position: relative; padding: 30px 4px 14px; text-align: center; cursor: pointer;
+  background: url('../assets/sprites/ui_scallop_shell.png') center bottom / 100% 82% no-repeat;
+  border: none; border-radius: 0; box-shadow: none;
+  filter: drop-shadow(0 3px 5px rgba(0,10,20,0.4));
+}
+.sp-card::before { content: none; }
+.sp-card:hover { filter: brightness(1.15) drop-shadow(0 3px 5px rgba(0,10,20,0.4)); }
+.sp-card.pick { outline: none; filter: drop-shadow(0 0 8px rgba(255,220,110,0.95)); }
+.sp-card.pick::after {
+  content: '✓'; position: absolute; right: 6px; top: 4px; color: #ffe259; font-weight: bold; font-size: 14px;
+}
+.sp-card canvas { width: 100%; height: 40px; position: relative; z-index: 1; }
+.sp-card .nm { font-size: 10px; color: #fff; text-shadow: 0 1px 3px #000, 0 0 4px #000; font-family: Georgia, serif; position: relative; z-index: 1; }
+.sp-card.unknown { opacity: 0.35; }
+/* 配种预测槽也用贝壳 */
+/* 海星装饰 */
+.spec-starfish { position: absolute; pointer-events: none; opacity: 0.85; filter: drop-shadow(0 3px 5px rgba(0,20,30,0.4)); z-index: 0; }
+.spec-starfish.sf-a { left: 34%; top: 12%; width: 74px; transform: rotate(-24deg); }
+.spec-starfish.sf-b { left: 4%; bottom: 6%; width: 58px; transform: rotate(48deg); opacity: 0.6; }
+.spec-starfish.sf-c { right: 30%; bottom: 30%; width: 46px; transform: rotate(12deg); opacity: 0.55; }
+/* 青色大理石水底背景（对照原版 Species Chart） */
+.panel-species {
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(ellipse 120px 40px at 12% 20%, rgba(210,240,248,0.30), transparent 65%),
+    radial-gradient(ellipse 90px 34px at 82% 62%, rgba(180,225,238,0.25), transparent 65%),
+    radial-gradient(ellipse 140px 46px at 40% 84%, rgba(160,210,228,0.22), transparent 65%),
+    radial-gradient(ellipse 70px 26px at 64% 16%, rgba(190,228,240,0.25), transparent 65%),
+    linear-gradient(175deg, #6ab8cc 0%, #4da0ba 45%, #3a88a4 80%, #2e7490 100%);
+}
+.spec-list, .spec-side { position: relative; z-index: 1; }
+.sp-card.pick { outline: 3px solid var(--gold); }
+.sp-card canvas { width: 100%; height: 36px; }
+.sp-card .nm { font-size: 10px; color: #fff; text-shadow: 0 1px 2px #000; font-family: Georgia, serif; }
+.sp-card.unknown { opacity: 0.35; }
+/* 右侧：配种结果 + 价格牌 + 键盘 */
+.spec-side { flex: 1; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.breed-row { display: flex; align-items: center; gap: 8px; }
+.breed-slot {
+  width: 108px; height: 78px; border: none; border-radius: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  font-size: 9px; color: #eaf6f8; text-align: center; text-shadow: 0 1px 2px #000;
+  background: url('../assets/sprites/ui_scallop_shell.png') center bottom / 100% 92% no-repeat;
+  filter: drop-shadow(0 3px 5px rgba(0,10,20,0.4));
+}
+.breed-slot canvas { width: 100px; height: 52px; }
+.spec-arrow { font-size: 18px; color: #1c3a4a; font-weight: bold; }
+.price-tag {
+  align-self: flex-end;
+  background: rgba(6,6,14,0.9); border: 2px solid #cfe8f0; border-radius: 6px;
+  padding: 10px 20px; font-family: Georgia, serif; font-size: 20px; color: #fff;
+}
+.price-tag b { color: var(--gold); }
+/* 计算器键盘 */
+.keypad {
+  display: grid; grid-template-columns: repeat(3, 44px); gap: 5px; padding: 10px;
+  background: rgba(30,90,105,0.85); border-radius: 10px; border: 2px solid rgba(255,255,255,0.35);
+  align-self: flex-end;
+}
+.keypad button {
+  width: 44px; height: 34px; cursor: pointer; font-size: 14px; font-weight: bold; color: #fff;
+  font-family: Georgia, serif;
+  background: radial-gradient(ellipse at 50% 30%, #7acce0, #3898ac 70%);
+  border: 2px solid rgba(255,255,255,0.5); border-radius: 50% 50% 46% 46% / 46% 46% 54% 54%;
+  text-shadow: 0 1px 2px #000;
+}
+.keypad button:hover { filter: brightness(1.2); }
+.keypad button.op { background: radial-gradient(ellipse at 50% 30%, #f0c868, #c08828 70%); border-color: rgba(255,255,255,0.6); }
+.chart-total { font-size: 12px; color: #123; font-weight: bold; }
+.chart-grid { display: grid; grid-template-columns: repeat(21, 8px); gap: 1px; }
+.chart-cell { width: 8px; height: 8px; background: rgba(30,70,90,0.25); border-radius: 1px; }
+.chart-cell.known { background: #2c88a8; }
+.chart-cell.magic { background: var(--gold); box-shadow: 0 0 4px var(--gold); }
+
+/* ============ Trophy Room：紫星 + 金画框 ============ */
+.panel-trophy {
+  background:
+    radial-gradient(ellipse 22% 36% at 14% 76%, rgba(230,170,110,0.45), transparent 70%),
+    radial-gradient(ellipse 14% 22% at 84% 30%, rgba(150,170,200,0.5), transparent 70%),
+    linear-gradient(180deg, #8ec8dc 0%, #6ab0cc 55%, #58a0be 100%);
+}
+.troph-head {
+  height: 54px; display: flex; align-items: center; justify-content: center; position: relative;
+  background:
+    radial-gradient(circle 3px at 10% 40%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(circle 2.5px at 30% 65%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(circle 3px at 55% 35%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(circle 2.5px at 78% 60%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(circle 3px at 93% 40%, rgba(255,255,255,0.9), transparent),
+    linear-gradient(180deg, #9a6ac0, #7a4aa0);
+  border-bottom: 3px solid #5a3478;
+}
+.troph-head h1 { font-family: Georgia, serif; font-size: 30px; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.55); letter-spacing: 2px; }
+/* v7.4：6 列网格 + 每项指定列区间 → 实现 2/3/2 的相框排列（对照原版） */
+.trophy-grid {
+  flex: 1; display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 20px 20px; padding: 26px 46px 20px; overflow-y: auto; align-content: center;
+}
+.trophy-frame {
+  position: relative; aspect-ratio: 1.66; padding: 8px; max-height: 150px;
+  background: linear-gradient(160deg, #e0c080, #b08840 45%, #8a6428 80%, #6e4e1c);
+  border-radius: 4px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45), inset 0 0 0 3px #f0dc9a, inset 0 0 0 5px #8a6428;
+}
+/* 顶部红色蝴蝶结挂钩（原版每个相框上方都有） */
+.trophy-frame::before {
+  content: '🎀'; position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 20px; filter: saturate(1.6) brightness(1.05);
+}
+.trophy-frame .art {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  background:
+    repeating-linear-gradient(45deg, rgba(120,90,150,0.25) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #c8b8dc, #a494c0);
+  border: 2px solid #6e4e1c; overflow: hidden;
+}
+.trophy-frame .art canvas { width: 100%; height: 100%; }
+.trophy-frame .q { font-size: 52px; color: #f4f0fa; text-shadow: 0 2px 4px rgba(80,60,110,0.6); font-family: Georgia, serif; }
+.trophy-frame .tag {
+  position: absolute; right: 6px; bottom: 4px;
+  background: rgba(58,40,20,0.88); color: #f0dc9a; font-family: Georgia, serif; font-size: 12px;
+  border-radius: 3px; padding: 2px 8px;
+}
+.trophy-frame .f-name {
+  position: absolute; left: 8px; bottom: 4px; right: 60px;
+  color: #fff8e0; font-size: 11px; font-family: Georgia, serif;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9); white-space: nowrap; overflow: hidden;
+}
+.trophy-frame .pw {
+  position: absolute; left: 4%; right: 4%; bottom: 100%; margin-bottom: 26px; text-align: center;
+  font-size: 10px; color: #2c2410; background: rgba(240,220,154,0.92); border-radius: 3px; padding: 3px 5px;
+}
+.trophy-frame.found { box-shadow: 0 0 22px rgba(255,225,130,0.8), inset 0 0 0 3px #ffe9a0, inset 0 0 0 5px #8a6428; }
+.troph-foot {
+  height: 58px; display: flex; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 30px;
+  background:
+    radial-gradient(circle 3px at 15% 45%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(circle 2.5px at 45% 60%, rgba(255,255,255,0.75), transparent),
+    radial-gradient(circle 3px at 75% 40%, rgba(255,255,255,0.85), transparent),
+    linear-gradient(180deg, #9a6ac0, #6a3e90);
+  border-top: 3px solid #5a3478;
+}
+
+/* 统计面板 */
+.stats-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 18px 30px; font-size: 15px; }
+.stats-list b { color: var(--gold); }
+
+/* ============ 开局 / 帮助 / 胜利 ============ */
+#start-overlay, #help-overlay, #win-overlay {
+  position: absolute; inset: 0; z-index: 50;
+  background: radial-gradient(ellipse at 50% 40%, rgba(60,40,110,0.96), rgba(16,10,36,0.98));
+  display: flex; align-items: center; justify-content: center;
+}
+#start-box, #help-box, #win-box {
+  width: min(640px, 92%); max-height: 90%; overflow-y: auto;
+  background: linear-gradient(180deg, #3a2a6a, #241a48);
+  border: 3px solid var(--gold); border-radius: 18px;
+  padding: 28px 32px; text-align: center;
+  box-shadow: 0 8px 50px rgba(0,0,0,0.8);
+}
+#start-box h1 { font-size: 40px; color: var(--gold); text-shadow: 0 2px 6px #000; letter-spacing: 6px; }
+#start-box .sub { color: #b0a0d8; margin: 4px 0 14px; font-size: 15px; }
+#start-box .desc { font-size: 13px; line-height: 1.7; color: #ddd; margin-bottom: 18px; }
+#starter-picks { display: flex; gap: 12px; justify-content: center; margin-bottom: 18px; }
+.starter-card {
+  width: 120px; padding: 10px 6px; cursor: pointer;
+  background: radial-gradient(ellipse at 50% 18%, #7ac4d8, #3a8aa4 62%, #2c6e88 88%);
+  border: 2px solid rgba(255,255,255,0.5); border-radius: 52% 48% 44% 56% / 84% 80% 22% 20%;
+  text-align: center;
+}
+.starter-card:hover { filter: brightness(1.15); }
+.starter-card.pick { border-color: var(--gold); box-shadow: 0 0 14px rgba(255,220,120,0.6); }
+.starter-card canvas { width: 100px; height: 48px; }
+.starter-card .nm { font-size: 12px; margin-top: 4px; color: #fff; text-shadow: 0 1px 2px #000; }
+.starter-card .sex { font-size: 10px; color: #ffe9a0; }
+#btn-start {
+  font-size: 17px; font-weight: bold; padding: 12px 40px; cursor: pointer;
+  background: linear-gradient(180deg, #f2c14e, #d09020); color: #4a3010;
+  border: 2px solid #fff; border-radius: 12px;
+}
+#btn-start:disabled { opacity: 0.4; cursor: not-allowed; }
+#start-box .tip { margin-top: 14px; font-size: 11px; color: #9a8ac8; }
+#help-box { text-align: left; }
+#help-box h2 { color: var(--gold); text-align: center; margin-bottom: 14px; }
+#help-box ul { list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 13px; line-height: 1.6; color: #ddd; }
+#btn-help-close, #btn-win-close { display: block; margin: 18px auto 0; font-size: 15px; padding: 9px 34px; cursor: pointer; background: var(--gold); color: #4a3010; font-weight: bold; border: 2px solid #fff; border-radius: 10px; }
+#win-box h1 { font-size: 34px; color: var(--gold); margin-bottom: 12px; }
+#win-box p { font-size: 15px; line-height: 1.8; color: #ddd; }
+#win-stats { color: #7ae08a; }

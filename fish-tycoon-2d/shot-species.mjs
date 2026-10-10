@@ -1,0 +1,18 @@
+import { chromium } from '@playwright/test';
+const b = await chromium.launch();
+const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
+await page.goto('http://127.0.0.1:5199/?seed=42');
+await page.evaluate(() => localStorage.clear());
+await page.reload();
+await page.waitForSelector('#starter-picks .starter-card');
+await page.locator('#starter-picks .starter-card').nth(0).click();
+await page.locator('#starter-picks .starter-card').nth(1).click();
+await page.locator('#btn-start').click();
+await page.waitForFunction(() => window.__FISH2D__?.diag()?.ready);
+await page.evaluate(() => window.__FISH2D__.hooks.forceAge(24));
+await page.waitForTimeout(600);
+await page.locator('#btn-species').click();
+await page.waitForTimeout(800);
+await page.locator('#modal-box').screenshot({ path: 'shot-species.png' });
+await b.close();
+console.log('ok');
