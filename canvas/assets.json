@@ -1,0 +1,125 @@
+{
+    "version":  1,
+    "assets":  {
+                   "art-tank-one":  {
+                                        "name":  "生产位图 · 一号缸背景",
+                                        "path":  "src/assets/art/tank-one.webp",
+                                        "description":  "生成的水草缸背景（1600w webp，213KB）：中央留空给程序化鱼群，运行时由 TankView 绘制。"
+                                    },
+                   "art-tank-two":  {
+                                        "name":  "生产位图 · 二号缸背景",
+                                        "path":  "src/assets/art/tank-two.webp",
+                                        "description":  "生成的沉木 + 红草缸背景：左侧绿叶、右侧红茎草、下方沉木，上方留空。"
+                                    },
+                   "art-tank-sale":  {
+                                         "name":  "生产位图 · 销售缸背景",
+                                         "path":  "src/assets/art/tank-sale.webp",
+                                         "description":  "生成的空缸背景：浅色砾石、右侧空白木牌（FOR SALE 由 UI 表达）。"
+                                     },
+                   "art-store":  {
+                                     "name":  "生产位图 · 鱼店场景",
+                                     "path":  "src/assets/art/store.webp",
+                                     "description":  "生成的等距鱼店内部图（无人、中央空地）：墙面展示柜、海报、柜台、门头红牌。顾客与销售缸由 canvas 叠加。"
+                                 },
+                   "art-supplies":  {
+                                        "name":  "生产位图 · 补给墙",
+                                        "path":  "src/assets/art/supplies.webp",
+                                        "description":  "生成的铁丝网商品墙 + 珊瑚岩框 + 右下木架，24 件商品网格叠在网格墙区域上。"
+                                    },
+                   "art-species":  {
+                                       "name":  "生产位图 · 图鉴背景",
+                                       "path":  "src/assets/art/species.webp",
+                                       "description":  "生成的水下图鉴背景 + 黄铜海贝边框，鱼种卡与鳍基因格叠加其上。"
+                                   },
+                   "art-trophy":  {
+                                      "name":  "生产位图 · 奖杯室墙面",
+                                      "path":  "src/assets/art/trophy.webp",
+                                      "description":  "生成的水下墙面 + 紫色星纹上下边框，DOM 金框相框叠加。"
+                                  },
+                   "npc-shopkeeper":  {
+                                          "name":  "生成立绘 · 店主",
+                                          "path":  "src/assets/npc/shopkeeper.webp",
+                                          "description":  "柜台后的女店主（围裙/眼镜/丸子头），裁剪到柜台台面以上，看起来站在柜台里面"
+                                      },
+                   "npc-worker":  {
+                                      "name":  "生成立绘 · 工人",
+                                      "path":  "src/assets/npc/worker.webp",
+                                      "description":  "蓝色工作服、手提工具箱的中年男性"
+                                  },
+                   "npc-business":  {
+                                        "name":  "生成立绘 · 商人",
+                                        "path":  "src/assets/npc/business.webp",
+                                        "description":  "深色西装 + 领带的商务男"
+                                    },
+                   "npc-elder-man":  {
+                                         "name":  "生成立绘 · 老人（男）",
+                                         "path":  "src/assets/npc/elder-man.webp",
+                                         "description":  "灰发眼镜、开衫的老年男性"
+                                     },
+                   "npc-office":  {
+                                      "name":  "生成立绘 · 上班族女性",
+                                      "path":  "src/assets/npc/office.webp",
+                                      "description":  "西装外套 + 手袋的年轻白领"
+                                  },
+                   "npc-woman":  {
+                                     "name":  "生成立绘 · 年轻女性",
+                                     "path":  "src/assets/npc/woman.webp",
+                                     "description":  "薄荷绿连衣裙 + 斜挎包"
+                                 },
+                   "npc-kid":  {
+                                   "name":  "生成立绘 · 小孩",
+                                   "path":  "src/assets/npc/kid.webp",
+                                   "description":  "双马尾小女孩"
+                               },
+                   "npc-elder-woman":  {
+                                           "name":  "生成立绘 · 老人（女）",
+                                           "path":  "src/assets/npc/elder-woman.webp",
+                                           "description":  "灰卷发、紫色开衫、提菜篮的老奶奶"
+                                       },
+                   "npc-student":  {
+                                       "name":  "生成立绘 · 学生",
+                                       "path":  "src/assets/npc/student.webp",
+                                       "description":  "背书包的男学生"
+                                   },
+                   "npc-student-side":  {
+                                            "name":  "生成立绘 · 学生（侧）",
+                                            "path":  "src/assets/npc/student-side.webp",
+                                            "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                        },
+                   "npc-office-side":  {
+                                           "name":  "生成立绘 · 上班族（侧）",
+                                           "path":  "src/assets/npc/office-side.webp",
+                                           "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                       },
+                   "npc-kid-side":  {
+                                        "name":  "生成立绘 · 小孩（侧）",
+                                        "path":  "src/assets/npc/kid-side.webp",
+                                        "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                    },
+                   "npc-woman-side":  {
+                                          "name":  "生成立绘 · 年轻女性（侧）",
+                                          "path":  "src/assets/npc/woman-side.webp",
+                                          "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                      },
+                   "npc-business-side":  {
+                                             "name":  "生成立绘 · 商人（侧）",
+                                             "path":  "src/assets/npc/business-side.webp",
+                                             "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                         },
+                   "npc-elder-man-side":  {
+                                              "name":  "生成立绘 · 老人男（侧）",
+                                              "path":  "src/assets/npc/elder-man-side.webp",
+                                              "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                          },
+                   "npc-elder-woman-side":  {
+                                                "name":  "生成立绘 · 老人女（侧）",
+                                                "path":  "src/assets/npc/elder-woman-side.webp",
+                                                "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                            },
+                   "npc-worker-side":  {
+                                           "name":  "生成立绘 · 工人（侧）",
+                                           "path":  "src/assets/npc/worker-side.webp",
+                                           "description":  "侧面行走立绘（朝右），往左走时水平翻转；与正面立绘同一套抠图管线。"
+                                       }
+               }
+}

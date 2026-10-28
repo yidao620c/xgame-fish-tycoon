@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "boards": [
+    {
+      "id": "709a4977-0e33-4784-a493-d4b3d8b60b3e",
+      "name": "养鱼大亨 · 复刻设计板"
+    }
+  ],
+  "documents": [
+    {
+      "id": "main-design",
+      "title": "养鱼大亨 · 主设计文档"
+    }
+  ],
+  "mainDocumentId": "main-design"
+}

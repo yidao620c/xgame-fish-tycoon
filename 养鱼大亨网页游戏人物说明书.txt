@@ -1,0 +1,41 @@
+# 任务描述
+实现一个网页版的《养鱼大亨》游戏，完全复刻《养鱼大亨》游戏。游戏界面风格参考`references/`目录下的游戏截图。
+
+## 中文介绍
+《养鱼大亨》（又称《热带鱼大亨》，英文：Fish Tycoon），是由Last Day of Work开发的一款模拟经营游戏，在2004年至2006年为最畅销的可下载游戏之一。玩家扮演一位鱼店老板，必须培育和照顾数百条不同品种的鱼，最终目标是寻找到7条魔法鱼。
+
+这个游戏的目标是发现7条魔术鱼。游戏开始你可以选择一些品种的小鱼进行喂养，系统会分配给你一些钱和蓄水池。你需要精心的照顾这些小鱼，帮助它们成长。如果遇到它们生病的情况，你可以买营养品或者药物来呵护它们。通过研究和时常调查，以及在广告上的投资都可以让你得到非常非常稀有的品种。直至你找到那些神奇的鱼。你可以通过在商店中兜售奇特的混合品种的鱼来获得投资的费用。
+
+## 英文介绍
+Fish Tycoon is a virtual fish breeding game. The object is to breed and cross breed fish until you find the 7 Magic Fish and solve the genetic puzzle. You will have to buy supplies like meds, eggs and special plants and then sell some of your fish in your virtual pet store. If you have enough money you can buy new supplies and customize your virtual aquarium.
+
+- Real-Time gameplay: new surprises every time you turn the game on.
+- Over 400 different species of fish to discover.
+- Genetic Puzzle: discover which breeding combinations will create the 7 Magic Fish.
+- Virtual Pet: care for your fish, breed them and make baby fish.
+- Simulation Game: virtual fish in a persistent world.
+- Screensaver Mode: breed and choose your own fish for your built-in screensaver.
+- Customizable Tanks: place your ornaments where you like most!
+
+## 故事
+这个游戏的故事是在神秘岛上有七条罕见、神奇的魔法鱼，形成平衡，但有一天所有的魔法鱼都消失了。因此，玩家交配跨品种的鱼，重新找回魔法鱼，回复神秘岛昔日的辉煌。
+
+## 玩法
+玩家须培育、照顾水族馆内的鱼，帮助它们成长。如果它们生病，要使用药品来治疗。在养育的过程中，玩家可以购买药品，也可以研究技术或投资广告，帮助发现更罕见的品种，直到找到魔法鱼。玩家必须靠出售店里的鱼来获得资金。这个游戏以即时的方式执行，即使退出游戏，小鱼仍会长大，10分钟便会长大1岁。
+
+## 魔法鱼
+Greenfin Spotanus：使怀孕的鱼可多生一条鱼。
+Spekled Leaffish：使鱼的饥饿度下降得慢点。
+Crimson Comet：治疗生病的鱼。
+Canary Fire-Arrow：售价极高，最高可以475元卖出。
+Oriental Goldbulb：加速鱼的成长，随机缩短生长需要的时间。
+Orange Snooper：增加鱼的健康度。
+Wasp Grouper：使鱼发生基因突变。
+
+## 评价
+有玩家认为，《养鱼大亨》没有时间限制和压力，真实性也十分出色。
+Pcmag.com评定《养鱼大亨》是一个令人惊讶的游戏，有4分（满分5分）的分数。
+
+## 参考链接
+- steam游戏介绍：https://store.steampowered.com/app/16130/Fish_Tycoon/
+- [参考手册](references/manual_english.pdf)

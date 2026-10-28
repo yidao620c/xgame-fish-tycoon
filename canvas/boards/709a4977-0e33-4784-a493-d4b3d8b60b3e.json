@@ -1,0 +1,192 @@
+{
+    "version":  1,
+    "id":  "709a4977-0e33-4784-a493-d4b3d8b60b3e",
+    "viewport":  {
+                     "width":  4200,
+                     "height":  2600
+                 },
+    "nodes":  [
+                  {
+                      "id":  "design-doc",
+                      "type":  "document",
+                      "title":  "养鱼大亨 · 主设计文档",
+                      "description":  "玩法、育子系统、经济、界面与美术清单的权威说明；第 9 节记录本次的美术替代方案。",
+                      "data":  {
+                                   "documentId":  "main-design"
+                               }
+                  },
+                  {
+                      "id":  "art-direction",
+                      "type":  "text",
+                      "title":  "美术方向（无图像生成时的替代方案）",
+                      "description":  "记录本次无法使用图像生成模型时，场景与图标如何用 canvas / SVG 程序化绘制。",
+                      "data":  {
+                                   "text":  "本次环境没有可用的图像生成模型（generate_image / generate_canvas_media 均返回 No image model is available）。因此不使用任何位图场景资产，改为程序化美术：\n\n1) 水缸：Canvas 2D 分层绘制 —— 水体渐变、焦散光柱、程序生成的砾石层、贝塞尔水草、多边形假山/沉木、玻璃反光与气泡。\n2) 鱼：按 21 鱼种轮廓 + 21 鳍基因配色/花纹/尾型实时绘制并摆尾（441 种组合因此全覆盖）。\n3) 鱼店：等距地砖 + 墙面展示缸 + 柜台 + 门头霓虹，顾客与气泡由 canvas 绘制。\n4) 补给商店 / 图鉴 / 奖杯室：CSS 纹理 + 内联 SVG，物品图标 24 件统一玻璃瓶/黄铜风格。\n\n取舍：牺牲照片级写实，换成统一、可控、可无限组合的绘本质感；配色与构图仍对齐 references/ 的原版截图。",
+                                   "instruction":  ""
+                               }
+                  },
+                  {
+                      "id":  "art-tank-one-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 一号缸背景",
+                      "description":  "运行时 src/assets/art/tank-one.webp，TankView 铺底，鱼/气泡/食物叠加其上。",
+                      "data":  {
+                                   "assetId":  "art-tank-one",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-tank-two-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 二号缸背景",
+                      "description":  "运行时 src/assets/art/tank-two.webp，沉木与红草布局。",
+                      "data":  {
+                                   "assetId":  "art-tank-two",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-tank-sale-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 销售缸背景",
+                      "description":  "运行时 src/assets/art/tank-sale.webp，空缸 + 空白木牌。",
+                      "data":  {
+                                   "assetId":  "art-tank-sale",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-store-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 鱼店场景",
+                      "description":  "运行时 src/assets/art/store.webp，StoreView 铺底，销售缸与顾客叠加绘制。",
+                      "data":  {
+                                   "assetId":  "art-store",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-supplies-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 补给墙",
+                      "description":  "运行时 src/assets/art/supplies.webp，补给商店屏幕背景。",
+                      "data":  {
+                                   "assetId":  "art-supplies",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-species-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 图鉴背景",
+                      "description":  "运行时 src/assets/art/species.webp，物种图鉴屏幕背景。",
+                      "data":  {
+                                   "assetId":  "art-species",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "art-trophy-node",
+                      "type":  "asset",
+                      "title":  "生产位图 · 奖杯室墙面",
+                      "description":  "运行时 src/assets/art/trophy.webp，奖杯室屏幕背景，相框用 DOM 叠加。",
+                      "data":  {
+                                   "assetId":  "art-trophy",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-shopkeeper-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 店主",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-shopkeeper",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-student-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 学生",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-student",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-office-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 上班族",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-office",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-kid-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 小孩",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-kid",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-elder-man-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 老人（男）",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-elder-man",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-business-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 商人",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-business",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-woman-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 年轻女性",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-woman",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-elder-woman-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 老人（女）",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-elder-woman",
+                                   "mediaType":  "image"
+                               }
+                  },
+                  {
+                      "id":  "npc-worker-node",
+                      "type":  "asset",
+                      "title":  "立绘 · 工人",
+                      "description":  "绿幕生成后离线抠图（colorkey + despill）、按 alpha 包围盒裁切、统一高度 520px 的透明 WebP；StoreView 绘制。",
+                      "data":  {
+                                   "assetId":  "npc-worker",
+                                   "mediaType":  "image"
+                               }
+                  }
+              ],
+    "edges":  [
+
+              ]
+}
