@@ -301,7 +301,7 @@ npm run preview  # 本地预览构建产物
 
 ## 十四、测试桥与验证
 
-`main.ts` 在 `globalThis.__O__HMYGAME_PLAYTEST__` 上暴露一个**仅用于自动化验证**的桥：
+`main.ts` 在 `globalThis.__O__H____MYGAME_PLAYTEST__` 上暴露一个**仅用于自动化验证**的桥：
 
 | 方法 | 作用 |
 | --- | --- |
@@ -361,6 +361,3 @@ npm run preview  # 本地预览构建产物
 - 设计文档：`canvas/documents/main-design.md`（画板：`canvas/boards/`）
 - 人物设定：`养鱼大亨网页游戏人物说明书.txt`
 
-> 原版界面截图（`fish_tank1/2`、`fish_store`、`fish_supplies`、`species_chat`、`trophy_room`）已完成参考作用，
->
-> 已从仓库中删除；画布素材清单里对应的 6 个参考条目也已同步移除。
